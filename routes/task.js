@@ -3,6 +3,15 @@ const Task = require('../models/task');
 
 const router = new express.Router()
 
+router.get('/api/home',(req, res) => {
+	try{
+		res.send('Welcome to Chaos Task Demo App')
+	}
+	catch(e){
+		res.send(e.message)
+	}
+})
+
 router.post('/api/tasks' , async(req , res) => {
     try{
         
