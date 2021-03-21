@@ -1,32 +1,28 @@
 const express = require('express');
-const Task = require('../models/task');
-
+const { v4 : uuidv4 } = require('uuid');
 const router = new express.Router()
 
-router.get('/api/home',(req, res) => {
-	try{
-		res.send('Welcome to Chaos Task Demo App')
-	}
-	catch(e){
-		res.send(e.message)
-	}
+let tasks = [];
+
+
+router.get('/api/home', (req, res) => {
+	res.end('<h1>Welcome to task app</h1>');
 })
 
-router.post('/api/tasks' , async(req , res) => {
+router.post('/api/tasks' , (req , res) => {
     try{
         
         if(!(req.body.title && req.body.description)){
             throw new Error('Please provide title and description')
         }
 
-        const task = new Task(req.body)
-        
-        const taskAdded = await task.save();
-        
+        const task = {...req.body , _id : uuidv4() }
+        tasks.push(task);
+    
         res.status(201).json({
             status : true,
             message : 'created successfully',
-            data : taskAdded
+            data : task
         })
         
     }catch(e){
@@ -37,10 +33,8 @@ router.post('/api/tasks' , async(req , res) => {
     }
 })
 
-router.get('/api/tasks' , async(req , res) => {
+router.get('/api/tasks' , (req , res) => {
     try{
-        const tasks = await Task.find({});
-        
         res.status(200).json({
             status : true,
             message : 'fetched successfully',
@@ -57,14 +51,21 @@ router.get('/api/tasks' , async(req , res) => {
     }
 })
 
-router.get('/api/tasks/:taskId' , async(req , res) => {
+router.get('/api/tasks/:taskId' , (req , res) => {
     try{
 
         if(req.params.taskId.length === 0){
             throw new Error('Please provide taskId to fetch data');
         }
+        
+        console.log(req.params.taskId);
+        const task = tasks.find((task) => {
+            return task._id === req.params.taskId
+        })
 
-        const task = await Task.findById(req.params.taskId)
+        if(!task){
+            throw new Error('No task associated with this Id or please push a new task')
+        }
 
         res.status(200).json({
             status : true,
@@ -81,7 +82,7 @@ router.get('/api/tasks/:taskId' , async(req , res) => {
     }
 })
 
-router.put('/api/tasks/:taskId' , async(req , res) => {
+router.put('/api/tasks/:taskId' , (req , res) => {
     try{
         if(req.params.taskId.length === 0){
             throw new Error('Please provide taskId to update');
@@ -91,8 +92,21 @@ router.put('/api/tasks/:taskId' , async(req , res) => {
             throw new Error('Please provide valid title and description')
         }
 
-        const task = await Task.findByIdAndUpdate({_id : req.params.taskId} , {$set : { ...req.body }} , {new : true})
-        console.log(task);
+        const task = tasks.find((task) => {
+            if(task._id === req.params.taskId){
+                task.title = req.body.title;
+                task.description = req.body.description;
+            }
+
+            return task
+        })
+
+        if(!task){
+            throw new Error('No task associated with this id..');
+        }
+
+        console.log('updated task.... ', task);
+        console.log('all tasks...', tasks);
 
         res.status(200).json({
             status : true,
@@ -108,15 +122,17 @@ router.put('/api/tasks/:taskId' , async(req , res) => {
     }
 })
 
-router.delete('/api/tasks/:taskId' , async(req , res) => {
+router.delete('/api/tasks/:taskId' , (req , res) => {
     try{
-        const task = await Task.findOne({_id : req.params.taskId});
-        
+        const task = tasks.find((task) => task._id === req.params.taskId)
+
         if(!task){
             throw new Error('No task found with this Id, Please try something else...')
         }
 
-        await Task.findOneAndRemove({_id : req.params.taskId});
+        tasks = tasks.filter((task) => {
+            return task._id !== req.params.taskId
+        })
 
         res.status(200).json({
             status : true,

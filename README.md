@@ -7,10 +7,6 @@ A demo application to perform todo tasks with basic CRUD functionalities
 node should be installed
 [NodeJS](https://nodejs.org/en/download/)
 
-mongodb should be installed
-[MongoDB](https://www.mongodb.com/try/download/community)
-
-
 to install all NodeJs libraries after installing node for this project:
 ```
 npm i 
@@ -20,7 +16,6 @@ or you can do it manually by adding these libraries
 
 ```js
 npm i express@4.17.1
-npm i mongoose@5.11.19
 ```
 
 # to start the app:
@@ -43,7 +38,6 @@ response: {
                 "_id": "604edbe4a3ab5203e245fa95",
                 "title": "my first task",
                 "description": "desc",
-                "__v": 0
             }
         ]
     }
@@ -62,7 +56,6 @@ response: {
             "_id": "604edbe4a3ab5203e245fa95",
             "title": "task-1",
             "description": "description-1",
-            "__v": 0
         }
     }
 }
@@ -85,7 +78,6 @@ response : {
             "_id": "604edbe4a3ab5203e245fa95",
             "title": "task-1",
             "description": "description-1",
-            "__v": 0
         }
     }
 }
@@ -108,7 +100,6 @@ response : {
             "_id": "604edbe4a3ab5203e245fa95",
             "title": "my first task",
             "description": "desc",
-            "__v": 0
         }
     }
 }
@@ -126,7 +117,6 @@ response : {
             "_id": "604edbe4a3ab5203e245fa95",
             "title": "my first task",
             "description": "desc",
-            "__v": 0
         }
     }
 }
